@@ -46,7 +46,7 @@ CONTRACT morphene_eos : public contract {
         name creator;
         name last_bidder = ""_n;
 
-        name status = "active"_n;
+        name status = "pending"_n;
 
         uint64_t start_time;
         uint64_t end_time;

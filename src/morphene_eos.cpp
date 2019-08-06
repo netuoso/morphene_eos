@@ -57,8 +57,13 @@ ACTION morphene_eos::newauction( name username, newauction_params params ) {
     o.total_value = params.fee;
     o.start_time = params.start_time;
     o.end_time = params.end_time;
-    o.created_at = current_time_point().sec_since_epoch();
-    o.updated_at = current_time_point().sec_since_epoch();
+    o.created_at = ctime;
+    o.updated_at = ctime;
+
+    users.modify(itr, _self, [&](auto& u) {
+      u.balance -= asset(params.fee.amount, symbol("EOS", 4));
+      u.updated_at = ctime;
+    });
   });
 }
 
@@ -66,21 +71,51 @@ ACTION morphene_eos::startsystem() {
   require_auth(_self);
 
   auctionstable auctions(_self, _self.value);
+  userstable users(_self, _self.value);
 
-  auto idx = auctions.get_index<"status"_n>();
-  auto itr_l = idx.lower_bound(name("active").value);
-  auto itr_u = idx.upper_bound(name("active").value);
   auto ctime = current_time_point().sec_since_epoch();
 
-  while(itr_l != idx.end() && itr_l != itr_u) {
-    if(itr_l->end_time < ctime){
-      idx.modify(itr_l, _self, [&](auto& o) {
-        o.status = "ended"_n;
-        o.updated_at = current_time_point().sec_since_epoch();
-      });
+  auto idx = auctions.get_index<"end"_n>();
+  auto itr = idx.rbegin();
 
-      ++itr_l;
-    }
+  while(itr != idx.rend()) {
+    if(itr->end_time < ctime && itr->status != "ended"_n){
+      auctions.modify(*itr, _self, [&](auto& o) {
+        o.status = "ended"_n;
+        o.updated_at = ctime;
+
+        auto creator = users.find(itr->creator.value);
+        auto bidder = users.find(itr->last_bidder.value);
+        auto payout_amount = itr->total_value.amount;
+
+        uint64_t creator_payout = 0;
+        uint64_t bidder_payout = 0;
+
+        if(itr->last_bidder != ""_n){
+          creator_payout = payout_amount * 0.15;
+          bidder_payout = payout_amount * 0.80;
+        } else {
+          creator_payout = payout_amount * 0.95;
+        }
+        if(creator_payout > 0) {
+          users.modify(creator, _self, [&](auto& c) {
+            c.balance += asset(creator_payout, symbol("EOS", 4));
+          });
+        }
+        if(bidder_payout > 0) {
+          users.modify(bidder, _self, [&](auto& b) {
+            b.balance += asset(bidder_payout, symbol("EOS", 4));
+          });
+        }
+      });
+    } else if ( itr->start_time < ctime && itr->end_time > ctime && itr->status == "pending"_n ) {
+      auctions.modify(*itr, _self, [&](auto& o) {
+        o.status = "active"_n;
+        o.updated_at = ctime;
+      });
+    } else if (itr->status == "ended"_n) { break; }
+
+    ++itr;
   }
 
   transaction deferred;
