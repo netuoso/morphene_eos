@@ -49,7 +49,7 @@ ACTION morphene_eos::newauction( name username, newauction_params params ) {
   auto ctime = current_time_point().sec_since_epoch();
 
   check(itr->balance.amount > 0, "user has no balance; transfer EOS to contract.");
-  check(params.fee > asset(1000, symbol("EOS", 4)), "minimum fee to create auction is 1.0000 EOS.");
+  check(params.fee >= asset(10000, symbol("EOS", 4)), "minimum fee to create auction is 1.0000 EOS.");
   check(itr->balance >= params.fee, "user does not have enough EOS balance.");
   check(params.start_time > ctime, "start_time must be in the future.");
   check(params.end_time > params.start_time, "end_time must be greater than start_time.");
@@ -81,7 +81,7 @@ ACTION morphene_eos::placebid( name username, uint64_t auction_id ) {
   auto itr = auctions.find(auction_id);
   auto user = users.find(username.value);
 
-  auto min_bid = asset(500, symbol("EOS", 4));
+  auto min_bid = asset(5000, symbol("EOS", 4));
 
   check(itr->status == "active"_n, "user can only bid on auction with active state");
   check(itr != auctions.end(), "user bidding on invalid auction.");
