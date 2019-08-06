@@ -13,3 +13,15 @@ Stub for withdraw action's ricardian contract
 <h1 class="contract"> newauction </h1>
 
 Stub for newauction action's ricardian contract
+
+---
+
+<h1 class="contract"> startsystem </h1>
+
+Stub for startsystem action's ricardian contract
+
+---
+
+<h1 class="contract"> stopsystem </h1>
+
+Stub for stopsystem action's ricardian contract
