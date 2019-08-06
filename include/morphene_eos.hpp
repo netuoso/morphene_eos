@@ -138,4 +138,54 @@ CONTRACT morphene_eos : public contract {
       });
     }
 
+    void process_auctions(){
+      auctionstable auctions(_self, _self.value);
+      userstable users(_self, _self.value);
+
+      auto ctime = current_time_point().sec_since_epoch();
+
+      auto idx = auctions.get_index<"end"_n>();
+      auto itr = idx.rbegin();
+
+      while(itr != idx.rend()) {
+        if(itr->end_time < ctime && itr->status != "ended"_n){
+          auctions.modify(*itr, _self, [&](auto& o) {
+            o.status = "ended"_n;
+            o.updated_at = ctime;
+
+            auto creator = users.find(itr->creator.value);
+            auto bidder = users.find(itr->last_bidder.value);
+            auto payout_amount = itr->total_value.amount;
+
+            uint64_t creator_payout = 0;
+            uint64_t bidder_payout = 0;
+
+            if(itr->last_bidder != ""_n){
+              creator_payout = payout_amount * 0.15;
+              bidder_payout = payout_amount * 0.80;
+            } else {
+              creator_payout = payout_amount * 0.95;
+            }
+            if(creator_payout > 0) {
+              users.modify(creator, _self, [&](auto& c) {
+                c.balance += asset(creator_payout, symbol("EOS", 4));
+              });
+            }
+            if(bidder_payout > 0) {
+              users.modify(bidder, _self, [&](auto& b) {
+                b.balance += asset(bidder_payout, symbol("EOS", 4));
+              });
+            }
+          });
+        } else if ( itr->start_time < ctime && itr->end_time > ctime && itr->status == "pending"_n ) {
+          auctions.modify(*itr, _self, [&](auto& o) {
+            o.status = "active"_n;
+            o.updated_at = ctime;
+          });
+        } else if (itr->status == "ended"_n) { break; }
+
+        ++itr;
+      }
+    }
+
 };
