@@ -83,9 +83,12 @@ ACTION morphene_eos::placebid( name username, uint64_t auction_id ) {
 
   auto min_bid = asset(5000, symbol("EOS", 4));
 
-  check(itr->status == "active"_n, "user can only bid on auction with active state");
+  check(itr->status == "active"_n, "user can only bid on auction with active state.");
+  check(itr->last_bidder != username, "user unable to bid as they are already last_bidder.");
   check(itr != auctions.end(), "user bidding on invalid auction.");
   check(user->balance > min_bid, "user does not have enough EOS balance.");
+
+  process_auctions();
 
   auctions.modify(itr, _self, [&](auto& o) {
     o.total_value += min_bid;
