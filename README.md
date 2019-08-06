@@ -15,6 +15,7 @@
 		- `username` - (type: name)
 - newauction
 	- allows a user to create an auction
+	- minimum action fee is 1.0000 EOS
 	- params: `username, params`
 		- `creator` (type: name)
 		- `fee` (type: uint64_t)
@@ -22,7 +23,7 @@
 		- `end_time` (type: uint64_t)
 - placebid
 	- allows user to place a bid on auction
-	- minimum bid is 0.500 EOS
+	- minimum bid is 0.5000 EOS
 	- balance must be deposited to smart contract account prior to bidding
 	- params:
 		- `username` - (type: name)
