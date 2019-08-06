@@ -50,7 +50,7 @@
 - `cmake ..`
 - `make`
 
-### Deploying
+### Deploying (refer to Building first)
 - `cleos set code CONTRACTACCOUNT morphene_eos/ morphene_eos.wasm morphene_eos.abi`
 - `cleos set account permission CONTRACTACCOUNT active --add-code`
 
