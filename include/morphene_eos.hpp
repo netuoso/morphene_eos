@@ -162,7 +162,7 @@ CONTRACT morphene_eos : public contract {
             uint64_t creator_payout = 0;
             uint64_t bidder_payout = 0;
 
-            if(itr->last_bidder != ""_n){
+            if(itr->bids_count > 0 && itr->last_bidder != ""_n){
               creator_payout = payout_amount * 0.15;
               bidder_payout = payout_amount * 0.80;
             } else {

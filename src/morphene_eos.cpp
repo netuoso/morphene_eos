@@ -3,7 +3,9 @@
 ACTION morphene_eos::reguser( name username ) {
 	require_auth(username);
 
-	if( !user_exists(username) ) create_user(username);
+  check(!user_exists(username), "user already registered.");
+
+  create_user(username);
 }
 
 ACTION morphene_eos::withdraw( name username, asset amount ) {
@@ -22,7 +24,7 @@ ACTION morphene_eos::withdraw( name username, asset amount ) {
   action act(
     permission_level{_self, "active"_n},
     "eosio.token"_n, "transfer"_n,
-    std::make_tuple(_self, username, amount, std::string(""))
+    std::make_tuple(_self, username, amount, "morphene_eos withdrawal")
   );
 
   act.send();
@@ -88,6 +90,7 @@ ACTION morphene_eos::placebid( name username, uint64_t auction_id ) {
   auctions.modify(itr, _self, [&](auto& o) {
     o.total_value += min_bid;
     o.bids_count += 1;
+    o.last_bidder = username;
 
     users.modify(user, _self, [&](auto& u){
       u.total_bids += 1;
