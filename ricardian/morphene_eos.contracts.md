@@ -16,6 +16,12 @@ Stub for newauction action's ricardian contract
 
 ---
 
+<h1 class="contract"> placebid </h1>
+
+Stub for placebid action's ricardian contract
+
+---
+
 <h1 class="contract"> startsystem </h1>
 
 Stub for startsystem action's ricardian contract

@@ -80,6 +80,7 @@ CONTRACT morphene_eos : public contract {
       ACTION reguser( name username );
       ACTION withdraw( name username, asset amount );
       ACTION newauction( name username, newauction_params params );
+      ACTION placebid( name username, uint64_t auction_id );
       ACTION startsystem( );
       ACTION stopsystem( );
       // ACTION placebid( uint64_t auction_id );
@@ -114,6 +115,7 @@ CONTRACT morphene_eos : public contract {
       using reguser_action = action_wrapper<"reguser"_n, &morphene_eos::reguser>;
       using withdraw_action = action_wrapper<"withdraw"_n, &morphene_eos::withdraw>;
       using newauction_action = action_wrapper<"newauction"_n, &morphene_eos::newauction>;
+      using placebid_action = action_wrapper<"placebid"_n, &morphene_eos::placebid>;
       using startsystem_action = action_wrapper<"startsystem"_n, &morphene_eos::startsystem>;
       using stopsystem_action = action_wrapper<"stopsystem"_n, &morphene_eos::stopsystem>;
       using transfer_action = action_wrapper<"transfer"_n, &morphene_eos::transfer>;
