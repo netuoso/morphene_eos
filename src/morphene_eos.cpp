@@ -114,7 +114,7 @@ ACTION morphene_eos::startsystem() {
     _self, "startsystem"_n, ""
   );
 
-  deferred.delay_sec = 3;
+  deferred.delay_sec = 60;
   deferred.send(_self.value, _self, true);
 }
 
