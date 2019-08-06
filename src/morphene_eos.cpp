@@ -94,6 +94,7 @@ ACTION morphene_eos::placebid( name username, uint64_t auction_id ) {
     o.total_value += min_bid;
     o.bids_count += 1;
     o.last_bidder = username;
+    o.end_time += 10; // add 10 seconds to auction end_time
 
     users.modify(user, _self, [&](auto& u){
       u.total_bids += 1;
@@ -114,7 +115,7 @@ ACTION morphene_eos::startsystem() {
     _self, "startsystem"_n, ""
   );
 
-  deferred.delay_sec = 60;
+  deferred.delay_sec = 1;
   deferred.send(_self.value, _self, true);
 }
 

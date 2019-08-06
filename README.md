@@ -25,6 +25,7 @@
 	- allows user to place a bid on auction
 	- minimum bid is 0.5000 EOS
 	- balance must be deposited to smart contract account prior to bidding
+	- each successful bid adds 10 seconds to the auctions end_time
 	- params:
 		- `username` - (type: name)
 		- `auction_id` - (type: uint64_t)
@@ -40,7 +41,7 @@
 - `eosio::onerror` handler for failures in deferred action processing
 
 ### System Processing of Auctions and Payouts
-- `startsystem` executes a deferred action loop that fires every 60 seconds
+- `startsystem` executes a deferred action loop that fires every 1 second
 - in case of deferred action failure, the action will be retried every 1 second by the onerror handler
 
 ### Building
